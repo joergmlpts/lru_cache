@@ -79,7 +79,7 @@ additional licenses:
 
 template < class T >
 struct Countfn {
-		unsigned long operator()( const T &x ) { return 1; }
+		unsigned long operator()( const T & ) { return 1; }
 };
 
 
@@ -103,7 +103,7 @@ template< class Key, class Data, class Sizefn = Countfn< Data > > class LRUCache
 		typedef typename Key_List::const_iterator Key_List_cIter; ///< Main cache iterator (const)
 		typedef std::map< Key, List_Iter > Map;                   ///< Index typedef
 		typedef std::pair< Key, List_Iter > Pair;                 ///< Pair of Map elements
-		typedef typename Map::iterator Map_Iter;			            ///< Index iterator
+		typedef typename Map::iterator Map_Iter;                  ///< Index iterator
 		typedef typename Map::const_iterator Map_cIter;           ///< Index iterator (const)
 
 	private:
@@ -132,12 +132,12 @@ template< class Key, class Data, class Sizefn = Countfn< Data > > class LRUCache
 		/** @brief Gets the current abstract size of the cache.
 		 *  @return current size
  		 */
-		inline const unsigned long size( void ) const { return _curr_size; }
+		inline unsigned long size( void ) const { return _curr_size; }
 
 		/** @brief Gets the maximum sbstract size of the cache.
 		 *  @return maximum size
 		 */
-		inline const unsigned long max_size( void ) const { return _max_size; }
+		inline unsigned long max_size( void ) const { return _max_size; }
 
 		/// Clears all storage and indices.
 		void clear( void ) {
