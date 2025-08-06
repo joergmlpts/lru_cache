@@ -181,14 +181,15 @@ template< class Key, class Data, class Sizefn = Countfn< Data > > class LRUCache
 
 		/** @brief Fetches a pointer to cache data.
 		 *  @param key to fetch data for
-		 *  @param touch whether or not to touch the data
+		 *  @param touch_data whether or not to touch the data
 		 *  @return pointer to data or NULL on error
 		 */
-		inline Data *fetch_ptr( const Key &key, bool touch = true ) {
+		inline Data *fetch_ptr( const Key &key, bool touch_data = true ) {
 			SCOPED_MUTEX;
 			Map_Iter miter = _index.find( key );
 			if( miter == _index.end() ) return NULL;
-			_touch( key );
+			if( touch_data )
+				_touch( key );
 			return &(miter->second->second);
 		}
 
