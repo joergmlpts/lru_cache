@@ -176,7 +176,9 @@ template< class Key, class Data, class Sizefn = Countfn< Data > > class LRUCache
 		 */
 		inline void touch( const Key &key ) {
 			SCOPED_MUTEX;
-			_touch( key );
+			Map_Iter miter = _index.find( key );
+			if( miter == _index.end() ) return;
+			_touch( miter );
 		}
 
 		/** @brief Fetches a pointer to cache data.
@@ -189,7 +191,7 @@ template< class Key, class Data, class Sizefn = Countfn< Data > > class LRUCache
 			Map_Iter miter = _index.find( key );
 			if( miter == _index.end() ) return NULL;
 			if( touch_data )
-				_touch( key );
+				_touch( miter );
 			return &(miter->second->second);
 		}
 
@@ -205,7 +207,7 @@ template< class Key, class Data, class Sizefn = Countfn< Data > > class LRUCache
 				return Data();
 			Data tmp = miter->second->second;
 			if( touch_data )
-				_touch( key );
+				_touch( miter );
 			return tmp;
 		}
 
@@ -220,7 +222,7 @@ template< class Key, class Data, class Sizefn = Countfn< Data > > class LRUCache
 			Map_Iter miter = _index.find( key );
 			if( miter == _index.end() ) return false;
 			if( touch_data )
-			  _touch( key );
+			  _touch( miter );
 			data = miter->second->second;
 			return true;
 		}
@@ -232,8 +234,8 @@ template< class Key, class Data, class Sizefn = Countfn< Data > > class LRUCache
 		 */
 		inline void insert( const Key &key, const Data &data ) {
 			SCOPED_MUTEX;
-			// Touch the key, if it exists, then replace the content.
-			Map_Iter miter = _touch( key );
+			// Remove the key, if it exists, then insert the content.
+			Map_Iter miter = _index.find( key );
 			if( miter != _index.end() )
 				_remove( miter );
 
@@ -270,12 +272,9 @@ template< class Key, class Data, class Sizefn = Countfn< Data > > class LRUCache
 		 *  @param key to be touched
 		 *  @return a Map_Iter pointing to the key that was touched.
 		 */
-		inline Map_Iter _touch( const Key &key ) {
-			Map_Iter miter = _index.find( key );
-			if( miter == _index.end() ) return miter;
+		inline void _touch( const Map_Iter& miter ) {
 			// Move the found node to the head of the list.
 			_list.splice( _list.begin(), _list, miter->second );
-			return miter;
 		}
 
 		/** @brief Interal remove function
