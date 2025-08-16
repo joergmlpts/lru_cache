@@ -65,6 +65,7 @@ additional licenses:
  *
  * @example lru_example.cpp
  */
+#pragma once
 #include <map>
 #include <list>
 #include <vector>
